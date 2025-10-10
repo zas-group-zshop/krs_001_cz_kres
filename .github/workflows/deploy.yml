@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Pull to IIS folder
         run: |
-          $path = 'c:\_www\bal_030_sk_seva_resp\App_Firma'
+          $path = 'c:\_www\krs_001_cz_kres\App_Firma'
           git config --global --add safe.directory $path
           git -C $path fetch --prune
           git -C $path reset --hard origin/main
