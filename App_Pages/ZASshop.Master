@@ -1,0 +1,560 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="ZASshop.master.cs" Inherits="ZASshop.NET.ZASshop" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="ZAScontrols"    Namespace="ZAScontrols"    TagPrefix="zas" %>
+<!DOCTYPE html>
+
+<html lang="<%# ZASutility.MyUtility.GetSession("Culture").Length>=2 ? ZASutility.MyUtility.GetSession("Culture").Substring(0,2) : "cs" %>">
+    <head id="MasterHead" runat="server">
+        <asp:Literal runat="server" ID="MasterHeadLiteral" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="robots" content="<%# Request.RawUrl.ToLower().Contains("/search/") ? "noindex,nofollow" : "index,follow" %>">
+
+        <meta charset="utf-8">
+
+        <meta name="image" content="<%# HttpContext.Current.Request.IsSecureConnection ? "https://" : "http://" %><%# Request.ServerVariables["SERVER_NAME"].ToString()%>/App_Firma/img/logo.png">
+        <meta itemprop="name" content="<%# ZASutility.MyUtility.GetSession("defa_page_title") %>">
+        <meta itemprop="description" content="<%# ZASutility.MyUtility.GetSession("description_revised").Length > 150 ? ZASutility.MyUtility.GetSession("description_revised").Substring(0,150) : ZASutility.MyUtility.GetSession("description_revised") %>">
+        <meta itemprop="image" content="<%# HttpContext.Current.Request.IsSecureConnection ? "https://" : "http://" %><%# Request.ServerVariables["SERVER_NAME"].ToString()%>/App_Firma/img/logo.png">
+        <meta name="og:title" content="<%# ZASutility.MyUtility.GetSession("titulek_stranky").StartsWith("#ISK;") ? ZASutility.MyUtility.GetSession("titulek_stranky").Substring(5) : ZASutility.MyUtility.GetSession("titulek_stranky") %>">
+        <meta name="og:description" content="<%# ZASutility.MyUtility.GetSession("description_revised").Length > 150 ? ZASutility.MyUtility.GetSession("description_revised").Substring(0,150) : ZASutility.MyUtility.GetSession("description_revised") %>">
+        <meta name="og:image" content="<%# HttpContext.Current.Request.IsSecureConnection ? "https://" : "http://" %><%# Request.ServerVariables["SERVER_NAME"].ToString()%>/App_Firma/img/logo.png">
+        <meta name="og:url" content="<%# HttpContext.Current.Request.IsSecureConnection ? "https://" : "http://" %><%# Request.ServerVariables["SERVER_NAME"].ToString()%>">
+        <meta name="og:site_name" content="<%# ZASutility.MyUtility.GetSession("defa_page_title") %>">
+        <meta name="og:locale" content="<%# ZASutility.MyUtility.GetSession("Culture").Replace("-","_") %>">
+        <meta name="og:type" content="website">
+        
+        <link href="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/css/main.min.css") %>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/css/firm.css") %>" rel="stylesheet" type="text/css" media="screen" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;600;700;800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:wght@100;300;400;500;700;900&display=swap" />
+        <link href="/App_Firma/DayPilot/Themes/scheduler_8.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript">
+            !window.jQuery && document.write('<script src="/App_Firma/js/jquery-1.7.2.min.js"><\/script>');
+		</script>
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->        
+
+        <script type='text/javascript'>
+        $(window).load(function() {
+            $('.loader').fadeOut('slow');
+            })
+	</script>
+			
+        <asp:ContentPlaceHolder ID="head" runat="server">
+        </asp:ContentPlaceHolder>
+    </head>
+    <body>
+        <div class="loader"></div>
+		<script type="text/javascript">
+            var RequiredFieldLong = '<%: ZASutility.MyUtility.GetLangResource("RequiredFieldLong") %>';
+            var PhoneNumberValidatorText1 = '<%: ZASutility.MyUtility.GetLangResource("PhoneNumberValidatorText1") %>';
+            var PhoneNumberValidatorText2 = '<%: ZASutility.MyUtility.GetLangResource("PhoneNumberValidatorText2") %>';
+            var PhoneNumberValidatorText3 = '<%: ZASutility.MyUtility.GetLangResource("PhoneNumberValidatorText3") %>';
+            //
+            $(document).ready( function () {
+              $(".loginPanel input").keydown(function(event) {
+                if (event.keyCode === 13) {
+                    document.getElementById("ctl00_lgLogin_LoginLinkButton").click();
+                }
+              });
+            });
+        </script>
+        <script type="text/javascript" src="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/address.js") %>"></script>
+
+        <form id="mainForm" runat="server">
+            <asp:ScriptManager ID="ToolkitScriptManager1" runat="server" EnableScriptGlobalization="true" EnableScriptLocalization="true" >
+                <Services>
+                    <asp:ServiceReference Path="~/AutoComplete.asmx" />
+                </Services>
+            </asp:ScriptManager>
+
+            <asp:UpdatePanel ID="UpdatePanelForBasketItems" runat="server" UpdateMode="Conditional">
+                <ContentTemplate>
+                </ContentTemplate>
+            </asp:UpdatePanel>
+          
+            <asp:Panel ID="pLoginRegistration" runat="server" CssClass="pLoginRegistration">
+            </asp:Panel>
+            
+            <asp:Panel ID="loginPanel" runat="server" CssClass="loginPanel" Style="display:none;" DefaultButton="lgLogin$LoginButton">
+                <div class="closeLoginPanel">
+                    <asp:HyperLink ID="hlcloseLoginPanel" runat="server" onclick="Sys.Extended.UI.PopupControlBehavior.__VisiblePopup.hidePopup();return false;" ToolTip="<%$ Resources: Resource, Close %>"><i class="fa fa-times-circle" aria-hidden="true"></i></asp:HyperLink>
+                </div>
+                <asp:Login ID="lgLogin" runat="server" 
+                    CssClass="lgLogin"
+                    CreateUserUrl='<%# "~/" + ZASutility.MyUtility.GetLangResource("PageRegistration") %>' CreateUserText='<%# ZASutility.MyUtility.GetLangResource("LoginRegistration") %>'
+                    PasswordRecoveryUrl='<%# "~/"+Resources.Resource.PageLostData %>' PasswordRecoveryText='<%# ZASutility.MyUtility.GetLangResource("LoginLostData") %>' 
+                    TitleText="" TitleTextStyle-Height="17" TextLayout="TextOnLeft"
+                    UserNameLabelText='<%# ZASutility.MyUtility.GetLangResource("LoginUserNameLabelText") %>' 
+                    PasswordLabelText='<%# ZASutility.MyUtility.GetLangResource("LoginPasswordLabelText") %>'
+                    DisplayRememberMe="false" RememberMeText='<%# ZASutility.MyUtility.GetLangResource("LoginRememberMeText") %>'
+                    FailureAction="RedirectToLoginPage" FailureText='<%# ZASutility.MyUtility.GetLangResource("LoginFailureText") %>'
+                    LoginButtonText='<%# ZASutility.MyUtility.GetLangResource("LoginLoginDo") %>'
+                    OnAuthenticate="lgLogin_OnAuthenticate" OnLoggedIn="lgLogin_OnLoggedIn" OnLoggingIn="lgLogin_OnLoggingIn"
+                    Orientation="Vertical"
+                    ValidateRequestMode="Disabled" LoginButtonType="Link"
+                    TextBoxStyle-CssClass="form-control"
+                    LoginButtonStyle-CssClass="btn btn-basic btn-login"
+                    ToolTip='<%# ZASutility.MyUtility.GetLangResource("LoginToolTip") %>' />
+
+                <asp:Panel ID="loginPanelFB" runat="server">
+                    <div class="fb-login-btn">
+                        <i class="fa fa-facebook" aria-hidden="true"></i>
+                        <asp:HyperLink ID="hlFacebookLogin" runat="server" CssClass="login-ext-link fbLoginButton" Text="<%$ Resources: Resource, LoginViaFacebook %>" />
+                    </div>
+                </asp:Panel>
+
+                <asp:Panel ID="loginPanelMS" runat="server">
+                    <asp:HyperLink ID="hlLiveIdLogin" runat="server" CssClass="msLoginButton" ToolTip="<%$ Resources: Resource, LoginViaLiveID %>">
+                        <input type="button" name="idSIButton9" id="idSIButton9" value="Sign in" class="defaultLiveId">
+                    </asp:HyperLink>
+                </asp:Panel>
+
+                <asp:Panel ID="loginPanelGO" runat="server" CssClass="googleSigninPanel">
+                    <div class="fb-login-btn">
+                        <i class="fa fa-google-plus" aria-hidden="true"></i>
+                        <asp:Label ID="lGoogleLogin" runat="server" Text="<%$ Resources: Resource, LoginViaGoogle %>" CssClass="googleSigninLabel" Visible="false" />
+                        <asp:HyperLink ID="hlGoogleLogin" runat="server" CssClass="login-ext-link google-plus" ToolTip="<%$ Resources: Resource, LoginViaGoogle %>" Text="<%$ Resources: Resource, LoginViaGoogle %>"></asp:HyperLink>
+                    </div>
+                </asp:Panel>
+
+            </asp:Panel>
+            
+
+            <asp:Panel ID="WrapperPanel" runat="server" CssClass="wrapper">
+                <asp:DropDownList ID="ddlRelUsers" runat="server" Visible="false" DataValueField="e_mail" DisplayMember="e_mail" ValueMember="e_mail" DataTextField="titul_pred,jmeno,prijmeni,nazev_firma" DataTextFormatString="{3}: {0} {2} {1}" OnSelectedIndexChanged="ddlRelUsers_SelectedIndexChanged" AutoPostBack="true" ViewStateMode="Enabled" EnableViewState="true" />
+                <div id="page">
+                    <asp:PlaceHolder ID="phHeaderKarat" runat="server" />
+										
+					<!-- headerWrapper -->
+    				<div class="headerWrapper">
+
+                        <asp:Panel ID="pHeader" runat="server" CssClass="header" DefaultButton="btFullText">
+
+                            <div class="container">
+                                <div class="row">
+
+                                    <div class="col-sm-3 col-md-3">
+                                        <div class="logo">
+                                            <asp:HyperLink ID="hlHome" runat="server" NavigateUrl='<%# "~/" + ZASshop.NET.Resources.Resource.PageDefault %>'>
+                                                <img src="/App_Firma/img/logo.png" alt="ZASshop" title="<%# ZASutility.MyUtility.GetLangResource("HomePage") %>" id="logo" />
+                                            </asp:HyperLink>                                            
+                                            <asp:HyperLink ID="h2Home" runat="server" NavigateUrl="~/Page/cs-CZ/7/servis">
+                                                <img src="/App_Firma/img/logo-servis.png" alt="ZASshop" title="Servis" id="logo-servis" />
+                                            </asp:HyperLink>
+                                        </div>                                        
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-3 col-md-3 pull-right">
+                                        <asp:UpdatePanel ID="UpdatePanelForBasket" runat="server" UpdateMode="Conditional">
+                                            <ContentTemplate>
+                                                <div id="basketInfo">
+                                                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                                    <asp:HyperLink ID="hlBasketAll" runat="server" NavigateUrl='<%# "~/" + ZASshop.NET.Resources.Resource.PageBasket %>'>
+                                                        <p class="price">
+                                                            <asp:PlaceHolder ID="phBasketInfo" runat="server">
+                                                                <asp:Literal ID="Literal4" runat="server" Text="<%$ Resources: Resource, PageBasketTitle %>"></asp:Literal>:
+                                                                <span class="cart-line-2">
+                                                                <asp:Literal ID="lBasketCount" runat="server" Text="<%$ Resources: Resource, BasketCount %>"></asp:Literal>
+                                                                <strong class="ks">
+                                                                    <asp:Label ID="lBasketCount_" runat="server" Text="0" />
+                                                                </strong>/
+                                                                <strong class="kc">
+                                                                    <asp:Label ID="lBasketTotal_" runat="server" Text="0" />                                
+                                                                </strong>
+                                                                </span>
+                                                            </asp:PlaceHolder>
+                                                            <asp:Label ID="lBasketInfoForCustomText" runat="server" Visible="false" />
+                                                        </p>
+                                                        <asp:HyperLink ID="hlBasket" runat="server" visible="false" NavigateUrl='<%# "~/" + ZASshop.NET.Resources.Resource.PageBasket %>' CssClass="button" Text="<%$ Resources: Resource, PageBasketTitle %>" />
+                                                    </asp:HyperLink>
+
+                                                    <!-- popupCart -->
+                                                    <asp:Panel ID="BasketItemsPanel" runat="server" CssClass="popupCart" Visible="true">
+                                                        <asp:PlaceHolder ID="phBasketItemsPanel" runat="server" />
+                                                    </asp:Panel>
+                                                    <!-- /popupCart -->
+                                                    
+                                                </div>
+                                            </ContentTemplate>
+                                        </asp:UpdatePanel>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-3 col-md-3 pull-right">
+                                        <asp:Panel ID="loginBoxPanel" runat="server" CssClass="loginBox">
+                                            <i class="fa fa-unlock-alt"></i>
+                                            <div class="links">
+                                                <asp:LoginView ID="LoginView1" runat="server">
+                                                    <LoggedInTemplate>
+                                                        <asp:HyperLink ID="hlRegistrationOther2" runat="server" Text="Profil uživatele" NavigateUrl='<%# "~/" + ZASshop.NET.Resources.Resource.PageCustomer %>' />
+                                                        <span>|</span>
+                                                        <asp:PlaceHolder ID="phRegistration" runat="server">                                                            
+                                                            <asp:HyperLink ID="hlRegistrationOther" runat="server" Text="<%$ Resources: Resource, LoginRegistrationShort %>" NavigateUrl='<%# "~/" + ZASshop.NET.Resources.Resource.PageRegistration %>' />
+                                                        </asp:PlaceHolder>
+                                                        <span>|</span>
+                                                        <asp:LoginStatus ID="LoginStatus1" CssClass="_logout" runat="server" LogoutText="<%$ Resources: Resource, LoginLogout %>" />
+                                                        <p class="login-name-logged">
+                                                            <asp:HyperLink ID="hpLoginName" runat="server" NavigateUrl='<%# "~/" + ZASshop.NET.Resources.Resource.PageCustomer %>' Enabled='<%# ZASutility.MyUtility.GetSession("zpusob_vzniku")!="10" %>'><asp:LoginName ID="LoginName" runat="server" Visible="false" /><%: ZASutility.MyUtility.GetSession("e_mail_real") %></asp:HyperLink>
+                                                        </p>
+                                                    </LoggedInTemplate>
+                                                    <AnonymousTemplate>
+                                                        <ajaxToolkit:PopupControlExtender ID="PopExForLogin" runat="server"
+                                                            TargetControlID="hlLogin"
+                                                            PopupControlID="loginPanel"
+                                                            OffsetY="30"
+                                                            OffsetX="0"
+                                                            Position="Left" />
+                                                        <ajaxToolkit:AnimationExtender id="PopExForLoginAnimation" runat="server" 
+                                                            TargetControlID="hlLogin">
+                                                            <Animations>
+                                                                <OnClick>
+                                                                    <Sequence>
+                                                                        <Parallel duration="1">
+                                                                            <FadeIn AnimationTarget="loginPanel" />
+                                                                        </Parallel>
+                                                                    </Sequence>
+                                                                </OnClick>                            
+                                                            </Animations>                                
+                                                        </ajaxToolkit:AnimationExtender>
+                                                        <asp:HyperLink ID="hlLogin" runat="server" Text="<%$ Resources: Resource, LoginLogin %>" CssClass="hlLogin" />
+                                                        <asp:PlaceHolder ID="phRegistration" runat="server">
+                                                            <span>|</span>
+                                                            <asp:HyperLink ID="hlRegistration" runat="server" Text="<%$ Resources: Resource, LoginRegistrationShort %>" NavigateUrl='<%# "~/" + ZASshop.NET.Resources.Resource.PageRegistration %>' />
+                                                        </asp:PlaceHolder>
+                                                        <p class="login-name-unlogged"><asp:Literal ID="Literal4" runat="server" Text="<%$ Resources: Resource, AnonymousUser %>" /></p>
+                                                    </AnonymousTemplate>
+                                                </asp:LoginView>
+                                            </div>
+                                        </asp:Panel>
+                                    </div>
+
+                                    <div class="col-xs-12 visible-xs">
+                                        <div class="mobile-buttons">
+                                            <button data-target="mobile-search" class="btn btn-default btn-lg js-mobile-btn js-btn-search">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-target="mobile-language" class="btn btn-default btn-lg js-mobile-btn js-btn-language">
+                                                <i class="fa fa-language" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-target="mobile-menu" class="btn btn-default btn-lg js-mobile-btn js-btn-menu">
+                                                <i class="fa fa-bars" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <script>
+                                    </script>
+
+                                    <div class="mobile-search col-xs-12 hidden-xs col-sm-3 col-md-3 _iqSearch">
+                                        <asp:PlaceHolder ID="phSearchFullText" runat="server">
+                                            <fieldset id="search" class="form-inline">
+
+                                                <div class="form-group">
+                                                    <asp:TextBox ID="tbFullText" runat="server" PlaceHolder="<%$ Resources: Resource, FullTextSearchWatermark %>" CssClass="keyword form-control" AutoCompleteMode="None" autocomplete="nope"></asp:TextBox>
+                                                </div>
+                                                <asp:Button ID="btFullText" runat="server" CssClass="button btn btn-basic" Text="<%$ Resources: Resource, FullTextSearch %>" onclick="btFullText_Click" />
+                                            </fieldset>
+                                        </asp:PlaceHolder>
+                                    </div>
+
+                                    <div class="mobile-language col-xs-12 hidden-xs col-sm-2 col-sm-offset-3 col-md-offset-0 col-md-1">
+                                        <asp:PlaceHolder ID="phLanguage" runat="server">
+                                            <fieldset id="language">
+                                                <asp:DropDownList ID="ddlLang" runat="server" cssClass="form-control"
+                                                    onselectedindexchanged="ddlLang_SelectedIndexChanged" AutoPostBack="true" >
+                                                </asp:DropDownList>
+                                            </fieldset>
+                                        </asp:PlaceHolder>
+                                    </div>
+
+                                </div>
+                            </div>
+                                <div class="mobile-menu row-menu hidden-xs">                                    
+                                        <div id="stripe">
+                                        <div class="container">
+                                            <asp:Panel ID="pBonus" runat="server" CssClass="bonus">
+                                                <asp:Literal ID="Literal5" runat="server" Text="<%$ Resources: Resource, YourBonusAccountState %>"></asp:Literal> <strong><asp:Literal ID="lBonusState" runat="server" /></strong>
+                                            </asp:Panel>
+                                                                    
+                                            <zas:ZASmenu ID="MainMenu" runat="server"
+                                                MenuResultHtml="ul" CssClass="MainMenu"
+                                                MenuCurrentItemCssClass="active"
+                                                MenuDepthMax="1" />
+                                            <!-- topMenu -->
+
+                                            <asp:PlaceHolder ID="phMenuExt" runat="server" />
+                                        
+                                            <asp:Button ID="btnNast" runat="server" Text="Nastavení" Visible="false" CssClass="main-settings"/><!-- DOPLNIT -->
+                                        </div>
+                                        </div> <!-- #stripe -->                                    
+                                </div>                            
+                        </asp:Panel>
+                    </div>
+
+            		<!-- extHeader -->
+                    <asp:PlaceHolder ID="phHeaderExt" runat="server" />
+            		<!-- /extHeader -->
+
+				    <!-- /headerWrapper -->
+										
+                    <asp:Panel ID="pBody" runat="server" CssClass="innerWrapper">
+
+                        <div class="container">
+                            <div class="row">
+                                <asp:Panel ID="LeftPanelWrapper" runat="server" CssClass="col-sm-3 col-md-3">
+                                    
+                                    <asp:Panel ID="LeftPanel" runat="server" cssClass="left-col">
+                                        <div id="leftCol">
+                                            <asp:PlaceHolder ID="phTreesAndMenus" runat="server" />
+                    
+                                            <asp:PlaceHolder ID="phCustomSearch" runat="server"></asp:PlaceHolder>
+
+                                            <div id="leftBanners" class="left-banners hidden-xs">
+                                                <asp:PlaceHolder ID="phForFirm" runat="server" />
+
+                                                <asp:Panel ID="InfoNewsQuestionnaire" runat="server" CssClass="InfoNewsQuestionnaireDiv" />
+                                            </div>
+                                        </div>
+                                        <!--#leftCol-->
+                                    </asp:Panel>
+
+                                </asp:Panel>
+                                <asp:Panel ID="ContentPanelWrapper" runat="server" CssClass="col-sm-9 col-md-9" data-class-full-page="col-sm-12">
+                                    <asp:Panel ID="ContentPanel" runat="server" cssClass="right-col">
+                                        <asp:Panel ID="main" runat="server" CssClass="main-panel">
+
+                                            <div class="site-map hidden-xs"><asp:Label ID="zsMainSiteMapLabel" runat="server" Text="<%$ Resources: Resource, NavigationTitle %>" CssClass="MainSiteMap-Title" /><zas:ZasSiteMap ID="zsMainSiteMap" runat="server" CssClass="MainSiteMap"
+                                                    CssClassRootNode="" CssClassRootNodeSeparator="" SeparatorRoot="|"
+                                                    CssClassNode="" CssClassNodeSeparator="" Separator="|"
+                                                    CssClassCurrentNode=""
+                                                    RootName="<%$ Resources: Resource, HomePage %>" RootUrl="<%$ Resources: Resource, PageDefault %>" RootTitle="<%$ Resources: Resource, HomePageTitle %>"
+                                                    HorizontalLineAfter="false" /></div>
+                                            
+                                            <asp:ContentPlaceHolder ID="ZasShopBodyPlaceHolder" runat="server" /> <!--content-->
+                                        </asp:Panel>
+                                        <!--main-->
+                                    </asp:Panel>
+
+                                    <asp:Panel ID="RightPanel" runat="server" Visible="false" >
+                                        <h2><asp:Label ID="lRightPanelHeaderLabel" runat="server" Text=""></asp:Label></h2>
+                                    </asp:Panel>
+                                </asp:Panel>
+                            </div>
+                        </div>
+                    </asp:Panel>
+                </div> <!--page-->
+
+                <!-- for footer bottom stick -->
+            </asp:Panel>
+
+            <div class="footer-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="footerWrapper">
+                                <asp:Panel ID="footer1" runat="server" CssClass="footer1">
+                                                        
+                                                    
+                                </asp:Panel>
+
+                                <!-- extHeader -->
+                                <asp:PlaceHolder ID="phFooterExt" runat="server" />
+                                <!-- /extHeader -->
+
+                                <!-- #footer1 -->
+                                            
+                              <div class="footerCopyrightWrapper">
+                                <asp:Panel ID="pFooterCopyright" runat="server" CssClass="footerCopyright" />
+                              </div>
+                                            
+                            </div>
+                            <asp:PlaceHolder runat="server" Visible='<%# !String.IsNullOrEmpty(ZASutility.MyUtility.GetSession("cookie_souhlas")) %>'>
+                            <script type="text/javascript">
+                                    $("document").ready( function(){
+
+                                      if(localStorage.getItem("cookiesAgreement") == "hide") {
+                                        $("#cookiesAgreement").hide();
+                                      } else {
+                                       $("#cookiesAgreement").show();
+                                      }
+
+                                      $("._agreeCookie").click(function(){
+                                        $("#cookiesAgreement").hide();
+                                        localStorage.setItem("cookiesAgreement", "hide");
+                                      });
+
+                                    });
+                            </script>
+                            <div id="cookiesAgreement">
+                                <%# ZASutility.MyUtility.GetSession("cookie_souhlas") %>
+                                <a class="button btn btn-basic _agreeCookie"><%# ZASutility.MyUtility.GetLangResource("Agree") %></a>
+                            </div>
+                            </asp:PlaceHolder>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <asp:Panel ID="MasterPageModal_Panel" runat="server">
+                <asp:Button ID="FakeBtnAction" runat="server" CssClass="hide-control hidden" />
+                <ajaxToolkit:ModalPopupExtender ID="MasterPageModal_mpe" runat="server"
+                    TargetControlID="FakeBtnAction" PopupControlID="MasterPageModal"
+                    DropShadow="true" BackgroundCssClass="modal" CancelControlID="hlAfterBack" />
+                <asp:Panel ID="MasterPageModal" runat="server" CssClass="modal-popup">
+                    <!-- pageDesc -->
+                    <div class="pageDesc modal-desc">
+                        <div class="modal-title"><asp:Literal ID="lh1" runat="server" Text="<%$ Resources: Resource, PageLoginTitle %>"></asp:Literal></div>
+                        <asp:Panel ID="pDescription" runat="server" cssClass="cartPopupDesc">
+                            <p><asp:Literal ID="MasterPageModalMessage" runat="server" /></p>
+                        </asp:Panel>
+                    </div>
+                    <!-- /pageDesc -->
+
+			        <!-- cartButtozns -->
+			        <div class="cartButtons modal-buttons">
+                        <asp:HyperLink ID="hlAfterBack"   CssClass="button btn btn-sm btn-default" runat="server" Text="OK" />
+			        </div>
+			        <!-- /cartButtons -->
+                </asp:Panel>
+            </asp:Panel>
+
+            <asp:Panel ID="SelectStateByUserPanelPanel" runat="server">
+                <asp:Button ID="FakeBtnActionForSelectByUser" runat="server" CssClass="hide-control hidden" />
+                <ajaxToolkit:ModalPopupExtender ID="SelectStateByUser_mpe" runat="server"
+                    TargetControlID="FakeBtnActionForSelectByUser" PopupControlID="SelectStateByUserPanel"
+                    DropShadow="true" BackgroundCssClass="modal" BehaviorID="SelectStateByUser_mpe_bhid" />
+                <asp:Panel ID="SelectStateByUserPanel" runat="server" CssClass="modal-popup">
+                    <!-- pageDesc -->
+                    <div class="pageDesc modal-desc">
+                        <div class="modal-title"><asp:Literal runat="server" Text='<%# ZASutility.MyUtility.GetLangResource("SelectStateDesc") %>'></asp:Literal></div>
+                        <div class="modal-desc">
+                            <zas:ZasDropDownList ID="eshop_stat" data-attr-stat runat="server" CssClass="form-change-country form-control" DataTextField="nazev" DataValueField="stat" Source="z_statycis_items/z_statycis_item" />
+                        </div>
+                    </div>
+			        <div class="modal-buttons">
+                        <asp:LinkButton runat="server" CssClass="button btn btn-sm btn-default" Text='OK' onclick="SelectState_Click" />
+			        </div>
+                </asp:Panel>
+            </asp:Panel>
+
+            <asp:PlaceHolder ID="phDurAdmin1" runat="server" Visible='<%# (ZASutility.MyUtility.GetSessionBool("spravce") ||
+                    ZASutility.MyUtility.IsValueInConfig("ipAddressForLog", "ipAddress", "value", ZASutility.MyUtility.GetSessionRequest(Request.ServerVariables["REMOTE_HOST"])) ||
+                    ZASutility.MyUtility.IsValueInConfig("ipAddressForLog", "ipAddress", "value", "All") ||
+                    Request.ServerVariables["SERVER_NAME"] == "localhost") ? true : false %>'>
+                <div class="log-admin">
+
+                    <asp:UpdatePanel ID="UpdatePanelForAdmin" runat="server" UpdateMode="Conditional">
+                        <ContentTemplate>
+                            <div class="log-admin-body">
+                            
+                                <asp:Panel ID="pLog" runat="server">
+                                    <div id="pLogBody">
+                                        <strong><asp:Literal ID="lAdminLogDescription" runat="server" Text="<%$ Resources: Resource, AdminLogDescription %>" />!!!</strong>
+                                        <br /><br />
+                                        
+                                        <asp:Literal ID="lAdminLogBegin" runat="server" Text="<%$ Resources: Resource, AdminLogBegin %>" />: <asp:Label ID="lAdminLogBeginTime" runat="server" Text="" /><br />
+
+                                        <asp:Panel ID="pLogItems" runat="server" CssClass="pLogItems">
+
+                                        </asp:Panel>
+
+                                        <asp:Literal ID="lAdminLogEnd" runat="server" Text="<%$ Resources: Resource, AdminLogEnd %>" />: <asp:Label ID="lAdminLogEndTime" runat="server" Text="" /><br />
+                                        <br />
+                                        <strong><asp:Literal ID="lAdminLogNext" runat="server" Text="<%$ Resources: Resource, AdminLogNext %>" />:</strong><br />
+                                            <asp:Table ID="tLogItems" runat="server" CssClass="pLogItems table table-condensed table-bordered table-striped">
+                                        </asp:Table>
+                                    </div>
+                                </asp:Panel>
+
+                                <asp:Panel ID="pLogSessionHeader" runat="server" CssClass="collapsePanelHeader" style="margin-top:5px;" Visible="false">
+                                    <div style="padding:5px; cursor: pointer; vertical-align: middle;">
+                                        <div style="float: left;">
+                                            <asp:Literal ID="Literal1" runat="server" Text="<%$ Resources: Resource, AdminLogTitleSessions %>"></asp:Literal></div><div style="float: right; vertical-align: middle;"> 
+                                            <asp:Image ID="iLogSessionHeader" runat="server" ImageUrl="~/App_Firma/Images/collapse.jpg" BorderWidth="0" />
+                                        </div> 
+                                    </div> 
+                                </asp:Panel>
+                            
+                                <asp:Panel ID="pLogSession" runat="server" Visible="false">
+                                    <div id="pLogSessionBody" style="border-right:1px solid black;border-bottom:1px solid black;border-left:1px solid black;padding:10px;">
+                                        <asp:Table ID="tLogSessionsItems" runat="server" CssClass="pLogSessionsItems">
+                                        </asp:Table>
+                                    </div>
+                                </asp:Panel>
+
+                                <asp:HyperLink ID="ShowAllSessionsLink" runat="server" NavigateUrl="/ShowCommandPage.aspx?show_session=true" Text="Show all sessions" Visible='<%# (ZASutility.MyUtility.GetSessionBool("spravce") || ZASutility.MyUtility.IsValueInConfig("ipAddressForLog", "ipAddress", "value", ZASutility.MyUtility.GetSessionRequest(Request.ServerVariables["REMOTE_HOST"])) || ZASutility.MyUtility.IsValueInConfig("ipAddressForLog", "ipAddress", "value", "All") || Request.ServerVariables["SERVER_NAME"] == "localhost") ? true : false %>' />
+                                &nbsp;
+                                <asp:LinkButton ID="SelectStateCookieBtn" runat="server" Text='Select state' onclick="SelectStateShowBtn_Click" />
+                                &nbsp;
+                                <asp:LinkButton ID="ClearStateCookieBtn" runat="server" Text='Clear cookies (state)' onclick="SelectStateClearBtn_Click" />
+                            </div>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+
+                    <div class="log-admin-header">
+
+                        <asp:LinkButton CssClass="log-section log-section-1_4" ID="lbClearCache" runat="server" OnClick="lbClearCache_Click" Visible='<%# ZASutility.MyUtility.GetSessionBool("pouzivat_cache") || 1==1 %>'>
+                            <i class="fa fa-trash-o" aria-hidden="true"></i> <span class="visible-xs">cache</span><span class="hidden-xs">clear server cache</span>
+                        </asp:LinkButton>
+
+                        <asp:LinkButton CssClass="log-section log-section-1_4" ID="lbClearSessions" runat="server" OnClick="lbClearSessions_Click">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i> <span class="visible-xs">sessions</span><span class="hidden-xs">clear sessions</span>
+                        </asp:LinkButton>
+
+                        <div class="log-section log-section-1_4" title="Velikost stránky">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> <span><%: (CommunicationUnCompressedLength/1000).ToString() %> kB</span>
+                        </div>
+
+                        <div class="log-section log-section-1_4" title="User's count">
+                            <i class="fa fa-user" aria-hidden="true"></i> <span><%: Application["users_count"]!=null ? Application["users_count"].ToString() : "n/a" %></span>
+                        </div>
+
+                        <div class="log-section log-section-1_2 log-section-clear" title="Čas načtení">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i> <span><%: PageCreateDuration!=null ? PageCreateDuration : "n/a" %></span>
+                        </div>
+                        <a class="log-section log-section-1_2" id="log-show-body" href="">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i> <span>Výpis pro správce</span>
+                        </a>
+                    </div>
+
+
+                </div>
+            </asp:PlaceHolder>
+        </form>
+        <link href="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/css/select2.min.css") %>" rel="stylesheet" />
+        <link href="<%= ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/css/dropzone.css") %>" rel="stylesheet"  />
+        <script src="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/select2.min.js") %>"></script>
+        <script src="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/select2.custom.js") %>"></script>
+        <script src="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/app.min.js") %>"></script>
+        <!-- include the RTL css files-->
+        <link rel="stylesheet" href="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/components/alertifyjs/css/alertify.min.css") %>">
+        <link rel="stylesheet" href="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/components/alertifyjs/css/themes/default.min.css") %>">
+        <link rel="stylesheet" href="/App_Firma/js/components/splide/css/splide.min.css?v=20220315114936">
+        <script src="<%# ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/components/alertifyjs/alertify.min.js") %>"></script>
+
+        <script src="/App_Firma/js/components/splide/js/splide.min.js?v=20220315114937"></script>
+
+        <script>
+            //new Splide('.splide').mount();
+            new Splide('.splide', {
+            type: 'loop',
+            perPage: 1,
+            autoplay: true,
+            }).mount();
+        </script>
+
+        <script>
+            var sessionID = '<%: Session.SessionID.ToString() %>';
+        </script>
+        <script src="<%= ZASutility.MyUtility.GetSourceWithVersion("/App_Firma/js/dropzone.js") %>"></script>
+
+        <div class="hide-control xuser-popup-message" style="display:none;" data-title="Nadpis zpravy">toto je testovaci zprava  v popup okne</div>
+        <div class="hide-control xuser-popup-info" style="display:none;">toto je testovaci informace</div>
+    </body>
+</html>

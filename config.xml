@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <!--konfiguracni soubor-->
+  <responsiveDesign enabled="true" />
+
+  <!--connection string pro cacheDB, suggest-->
+  <cacheDB enabled="false" connectionString="Data Source=localhost;Initial Catalog=ZAS_CACHE;Persist Security Info=True;User ID=sa;Password=sqlsql;Connection Timeout=90;Connection Lifetime=0;Min Pool Size=1;Max Pool Size=10;Pooling=true;" />
+
+  <!--definice SMTP serveru-->
+  <smtpSrv pickupDirectory="" host="" port="25" userName="" password="" domain="" enableSsl="false"/>
+
+  <!--nastaveni odesílání mailu-->
+  <sendingMail>
+    <errorMail enabled="true" />
+  </sendingMail>
+
+  <!--definice mailovych adres type=to,bcc,cc-->
+  <mailAddress>
+    <!--sender muze byt pouze jeden -->
+    <errorSenderAddress address="zshop-kres@zshop.cz" name="" />
+
+    <!--adres muze byt N-->
+    <errorAddress type="to" address="spravce@kres.cz" name="spravce@kres.cz" />
+  </mailAddress>
+  
+  <!--definice IP adres, pro zobrazovani logu-->
+  <ipAddressForLog>
+    <ipAddress value="127.0.0.1" />
+    <ipAddress value="localhost" />
+  </ipAddressForLog>
+
+  <!--definice zda-li se maji nacitat BASIC_PARAMS vzdy, nebo jen jednou-->
+  <alwaysReadParams value="true" />
+
+  <!--definice zda-li se maji nacitat BASIC_PARAMS vzdy, nebo jen jednou-->
+  <communicationIsLogging value="false" />
+
+  <!--identifikace souboru pro vodoznak-->
+  <!--atribut enabled může nabývat hodnot false,true,without_png,new-type
+      pro new-type jsou k dispozici další parametry:
+      level muze byt: low,normal,high nebo presne zadana float hodnota (0.3f=low, 1.0f=normal, 3.0f=high)
+      hozizontalAlign muze nabyvat hodnot left,center,right
+      verticalAlign muze nabyvat hodnot top,center,bottom-->
+  <waterMark enabled="without_png" 
+      emptyCopyright="false"
+      file=""
+      level="1.5f"
+      hozizontalAlign="center"
+      verticalAlign="bottom" />
+
+  <!--definice záznamů pro řazení (pokud je zde neco uvedeno, celá sekce má přednost, před standardním config)-->
+  <sortItems>
+    <!--pokud je name a value prazdné, nebude se do řazení ze standardního config generovat nic (pouze řazení dle přidaných sloupců v Karatu, pokud je definováno)-->
+    <xsortItem name="xNázev" value="nomen.nazev asc" type="name" name_en="xName" />
+    <!--pokud je name a value prazdné, nebude se do řazení ze standardního config generovat nic (pouze řazení dle přidaných sloupců v Karatu, pokud je definováno)-->
+    <xsortItem name="" value="" />
+  </sortItems>
+
+  <!--definice záznamů pro počet záznamů na stránce-->
+  <resultCountItems>
+    <!--pokud je name a value prazdné, nebude se do komba ze standardního config generovat nic-->
+    <xresultCountItem name="vše" value="9999" name_en="all" />
+  </resultCountItems>
+
+  <BasketForNonRegistredUser>
+    <!--pokud je value=true a je uveden command, posila se kazde vlozeni do kosiku agentovi at si s tim neco treba udela na firemni urovni-->
+    <sendToKarat value="false" command="SET_BASKET_ITEM_NOUSER" />
+  </BasketForNonRegistredUser>
+
+  <!--definice routovaci tabulky ... doplňuje (type=Add) nebo přepisuje (type=Replace) standardní-->
+  <routingTable type="Add">
+    <route VirtualPath="~/ZASshopPage.aspx" >
+      <url ID="SpecialPageWithControls"   DynamicUrl="zs/{Id}/{*PageParams}" />
+    </route>
+  </routingTable>
+
+  <!--definice pro zobrazeni/skryti ovladacich prvku na Master.Page-->
+  <MasterPageControlsSettings>
+    <FullTextSearch enabled="true" visible="true" withAccents="false" />
+    <LanguageSelector enabled="true" visible="true" />
+    <LoginDialog enabled="true" visible="true" />
+    <Registration enabled="true" visible="true" />
+    <Basket enabled="true" visible="true" />
+    <MainMenu enabled="true" visible="true" />
+    <SiteMap enabled="true" visible="true" />    
+    <LeftPanel enabled="true" visible="true" unvisibleForPages="Default,OrderDetail,Basket,CreateOrderPage,AccountSettings,AddressesList,AdministrationPage,AdministrationUsers,BranchesAndContacts,CreateNewOrderPage,CustomerPage,Home,ChangePasswordPage,InvoicesList,LoginPage,LostData,ManufacturersPage,OrdersList,PaymentGoPayNotifications,PaymentGoPaySuccess,PaymentGPWebPayReply,ProductDetail,QuickBuy,RegistrationPage,ResetPassword,ResultPage,ShoppingList,TextPage,ZASshopPage" />
+    <RightPanel enabled="true" visible="true" />
+    <CustomFooter enabled="true" visible="true" />
+    <CustomProfilePage enabled="true" />
+    <BonusInfo visible="true" />
+    <Actions commonName="" commonName_en="" />
+  </MasterPageControlsSettings>
+
+  <!--definice pro zobrazeni/skryti ovladacich prvku na seznamu produktů-->
+  <ProductListControlsSettings>
+    <SiteMap visible="true" />
+    <SortPaging visible="true" />
+    <ManufacturerSelect type="cbx" selectAllText="" selectAllText_en="" /> <!--určuje typ ovládacího prvku pro filtrování dle výrobců. možnosti: cbx=checkboxy (default), ddb=dropdownlist -->
+    <Signpost enabled="false" /><!--pokud se zapne, je to pomale-->
+  </ProductListControlsSettings>
+
+  <!--definice pro zobrazeni/skryti ovladacich prvku na detailu produktů-->
+  <ProductDetailControlsSettings>
+    <Compare enabled="true" visible="true" /> <!--porovnání produktů-->
+    <SiteMap visible="true" />
+  </ProductDetailControlsSettings>
+
+  <!--definice pro zobrazeni/skryti tlacitek pro pokrocilou praci s kosikem-->
+  <BasketActionsSettings>
+    <SendByEmail enabled="false" />
+    <ExportToXml enabled="true" />
+    <InsertItem enabled="false" /> <!--zatim nepodporovano-->
+    <ImportFromXml enabled="false" />
+    <PrintToPdf enabled="true" />
+    <AfterChangeQuantityReCalc enabled="true" />
+  </BasketActionsSettings>
+
+  <!--definice pro HomePage (parametr type=RESPONSE|TRANSFER urcuje, jakym zpusobem se ma provest presun, vychozi je transfer)-->
+  <xHomePageDefinition value="/zs/test" name="Testovací stránka" type="RESPONSE" description="" />
+  <xHomePageDefinition value="LostData.aspx" name="Testovací stránka" type="" description="" />
+  <PageFileNotFoundDefinition autoRedirectToHomePage="true" />
+
+  <CreatingOrder>
+    <xNoRightToSaveOrder text="Není možné dokončit objednávku, protože Váš účet není správně nastaven!&lt;br/&gt;&lt;br/&gt;Kontaktujte nás k dořešení Vaší registrace." />
+  </CreatingOrder>
+
+  <PagesTitle>
+    <LoginPage cz="Přihlášení" en="Enter the system" />
+  </PagesTitle>
+
+  <Attachment>
+    <ProcessAttachments enabled="true" />
+    <SaveAttachmentsInSimpleForm enabled="true" />
+  </Attachment>
+
+  <EncodeNomen enabled="true">
+    <EncodeNomenChars o-value="/" n-value="+++" />
+  </EncodeNomen>
+</root>

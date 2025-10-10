@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <!--konfiguracni soubor-->
+
+  <!--connection string pro cacheDB, suggest-->
+  <cacheDB enabled="true" connectionString="Data Source=192.168.99.10,1433;Initial Catalog=ZAS_CACHE;Persist Security Info=True;User ID=dba_zas_cache;Password=SqlSql;Connection Timeout=90;Connection Lifetime=0;Min Pool Size=1;Max Pool Size=10;Pooling=true;" />
+
+  <!--definice SMTP serveru-->
+  <smtpSrv pickupDirectory="" host="192.168.99.11" port="25" userName="" password="" domain="ZASGROUP" enableSsl="false"/>
+
+  <!--nastaveni odesílání mailu-->
+  <sendingMail>
+    <errorMail enabled="false" />
+  </sendingMail>
+
+  <!--definice mailovych adres type=to,bcc,cc-->
+  <mailAddress>
+    <!--sender muze byt pouze jeden -->
+    <errorSenderAddress address="zasshop.net@zasgroup.cz" name="" />
+    <!--from muze byt pouze jeden (vetsinou stejne jako sender, pokud neni uvedeno, pouzije se sender)-->
+    <errorFromAddress address="zasshop.net@zasgroup.cz" name="" />
+
+    <!--adres muze byt N-->
+    <errorAddress type="to" address="jiriz@zasgroup.cz" name="JiriZ" />
+    <errorAddress type="bcc" address="jiri.zdrazil@zasgroup.cz" name="Jiri Zdrazil" />
+    <errorAddress type="bcc" address="jiri.zdrazil@admis-dms.cz" name="Jiri Admis" />
+  </mailAddress>
+  
+  <!--definice IP adres, pro zobrazovani logu-->
+  <ipAddressForLog>
+    <ipAddress value="127.0.0.1" />
+    <ipAddress value="localhost" />
+    <ipAddress value="192.168.99.98" />
+    <ipAddress value="192.168.99.54" />
+    <ipAddress value="46.227.168.82" />
+    <ipAddress value="84.242.98.29" />
+  </ipAddressForLog>
+
+  <!--definice zda-li se maji nacitat BASIC_PARAMS vzdy, nebo jen jednou-->
+  <alwaysReadParams value="true" />
+
+  <!--definice zda-li ma kazdy command zapisovat do logu, pro nasledne vyhodnoceni optimalizace jednotlivych stranek a commandu-->
+  <communicationIsLogging value="true" />
+
+  <!--identifikace souboru pro vodoznak-->
+  <waterMarkFile value="/App_Data/watermark.bmp" />
+
+  <!--definice záznamů pro řazení (pokud je zde neco uvedeno, celá sekce má přednost, před standardním config)-->
+  <sortItems>
+    <!--pokud je name a value prazdné, nebude se do řazení ze standardního config generovat nic (pouze řazení dle přidaných sloupců v Karatu, pokud je definováno)-->
+    <xsortItem name="xNázev" value="nomen.nazev asc" type="name" name_en="xName" />
+    <!--pokud je name a value prazdné, nebude se do řazení ze standardního config generovat nic (pouze řazení dle přidaných sloupců v Karatu, pokud je definováno)-->
+    <xsortItem name="" value="" />
+  </sortItems>
+
+  <!--definice záznamů pro počet záznamů na stránce-->
+  <resultCountItems>
+    <!--pokud je name a value prazdné, nebude se do komba ze standardního config generovat nic-->
+    <xresultCountItem name="vše" value="9999" name_en="all" />
+  </resultCountItems>
+
+  <BasketForNonRegistredUser>
+    <!--pokud je value=true a je uveden command, posila se kazde vlozeni do kosiku agentovi at si s tim neco treba udela na firemni urovni-->
+    <sendToKarat value="false" command="SET_BASKET_ITEM_NOUSER" />
+  </BasketForNonRegistredUser>
+
+  <!--definice routovaci tabulky ... doplňuje (type=Add) nebo přepisuje (type=Replace) standardní-->
+  <routingTable type="Add">
+    <route VirtualPath="~/ZASshopPage.aspx" >
+      <url ID="SpecialPageWithControls"   DynamicUrl="zs/{Id}/{*PageParams}" />
+    </route>
+  </routingTable>
+
+  <!--definice pro zobrazeni/skryti ovladacich prvku na Master.Page-->
+  <MasterPageControlsSettings>
+    <FullTextSearch enabled="true" visible="true" />
+    <LanguageSelector enabled="true" visible="true" />
+    <LoginDialog enabled="true" visible="true" />
+    <Registration enabled="true" visible="true" />
+    <Basket enabled="true" visible="true" />
+    <MainMenu enabled="true" visible="true" />
+    <SiteMap enabled="true" visible="true" />
+    <LeftPanel enabled="true" visible="true" />
+    <RightPanel enabled="true" visible="true" />
+    <CustomFooter enabled="true" visible="true" />
+    <CustomProfilePage enabled="true" />
+    <BonusInfo visible="true" />
+  </MasterPageControlsSettings>
+
+  <!--definice pro zobrazeni/skryti ovladacich prvku na seznamu produktů-->
+  <ProductListControlsSettings>
+    <CustomSearch enabled="true" visible="true" /> <!--pokročilé vyhledávání-->
+  </ProductListControlsSettings>
+
+  <!--definice pro zobrazeni/skryti ovladacich prvku na detailu produktů-->
+  <ProductDetailControlsSettings>
+    <Compare enabled="true" visible="true" /> <!--porovnání produktů-->
+  </ProductDetailControlsSettings>
+
+  <!--definice pro zobrazeni/skryti tlacitek pro pokrocilou praci s kosikem-->
+  <xBasketActionsSettings>
+    <SendByEmail enabled="true" />
+    <ExportToXml enabled="true" />
+    <InsertItem enabled="false" /> <!--zatim nepodporovano-->
+    <ImportFromXml enabled="true" />
+    <PrintToPdf enabled="true" />
+  </xBasketActionsSettings>
+
+  <!--definice pro HomePage (parametr type=RESPONSE|TRANSFER urcuje, jakym zpusobem se ma provest presun, vychozi je transfer)-->
+  <xHomePageDefinition value="/zs/test" name="Testovací stránka" type="RESPONSE" description="" />
+  <xHomePageDefinition value="LostData.aspx" name="Testovací stránka" type="" description="" />
+
+  <PagesTitle>
+    <LoginPage cz="Přihlášení" en="Enter the system" />
+  </PagesTitle>
+</root>
